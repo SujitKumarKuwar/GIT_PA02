@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -14,6 +16,11 @@ public class Player : MonoBehaviour
     private Animator thisAnimator = null;
 
     private float moveSpeed = 0.05f;
+    public static int score;
+    public Text Txt_Score;
+    public Text Txt_Lives;
+
+    public GameObject Explode;
 
     void Start()
     {
@@ -26,7 +33,7 @@ public class Player : MonoBehaviour
     {
         if (!Jump)
         {
-            if (Input.GetKey(KeyCode.Space))
+            if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
                 Jump = true;
 
             if (thisController.isGrounded)
@@ -52,6 +59,33 @@ public class Player : MonoBehaviour
 
         thisController.Move(MoveDirection);
         transform.position = new Vector3(Mathf.Clamp(transform.position.x, -1.5f, 1.5f), transform.position.y, transform.position.z);
+        Txt_Score.text = "Score: " + score;
+        if(GameManager.Lives <= 0)
+        {
+            SceneManager.LoadScene(1);
+        }
     }
+    /* private void OntriggerEnter(Collider other)
+      {
+          print("hit");
+         
+      }*/
+
+    void OnCollisionEnter(Collision collider)
+    {
+        if (collider.gameObject.tag == "Obstacle")
+        {
+            GameObject boom = Instantiate(Explode, transform.position, transform.rotation);
+            Destroy(boom, 1);
+
+            Destroy(collider.gameObject);
+            GameManager.Lives--;
+            Txt_Lives.text = "LIVES: " + GameManager.Lives;
+            HUD.HUDManager.UpdateLives();
+            //Time.timeScale = 0;
+          
+        }
+    }
+
 
 }

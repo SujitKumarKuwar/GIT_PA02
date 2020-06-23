@@ -20,6 +20,11 @@ public class Obstacles : MonoBehaviour
         if(transform.position.z <= -8)
         {
             Destroy(gameObject);
+            Player.score++;
         }
     }
+
+
+
+  
 }
